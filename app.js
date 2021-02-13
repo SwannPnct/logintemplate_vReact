@@ -11,19 +11,9 @@ var usersRouter = require('./routes/users');
 var app = express();
 require('./routes/db/connect');
 
-const session = require('express-session');
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-
-app.use(
-  session({ 
-  secret: process.env.SESSION_KEY, 
-  resave: false,
-  saveUninitialized: false,
-  })
-  );
 
 app.use(logger('dev'));
 app.use(express.json());

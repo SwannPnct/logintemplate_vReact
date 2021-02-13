@@ -8,7 +8,38 @@ export default function Login() {
     const [usernameSU, setUsernameSU] = useState("")
     const [emailSU, setEmailSU] = useState("")
     const [passwordSU, setPasswordSU] = useState("")
+    const [errorSI, setErrorSI] = useState(null)
+    const [errorSU, setErrorSU] = useState(null)
 
+    async function handleSignIn() {
+        const res = await fetch('/users/sign-in', {
+            method: "POST",
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                email: emailSI,
+                password: passwordSI
+            })
+        })
+    }
+
+    async function handleSignUp() {
+        const res = await fetch('/users/sign-up', {
+            method: "POST",
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+                username: usernameSU,
+                email: emailSU,
+                password: passwordSU
+            })
+        })
+        const resJson = await res.json();
+        if (!resJson.result) {
+            setErrorSU(resJson.error);
+        } else {
+            setErrorSU(null);
+            setToken(resJson.token)
+        }
+    }
 
     return (
         <div className="main_container">
@@ -26,7 +57,7 @@ export default function Login() {
                             <label>Password</label>
                             <input type="password" onChange={() => e => setPasswordSI(e.target.value)} value={passwordSI}></input>
                         </div>
-                        <button class="submit_button">Sign-In</button>
+                        <button class="submit_button" onClick={() => handleSignIn()}>Sign-In</button>
                     </div>
                 </div>
                 <div class="gen_form" id="form_two">
@@ -46,7 +77,7 @@ export default function Login() {
                             <label>Password</label>
                             <input type="password" onChange={() => e => setPasswordSU(e.target.value)} value={passwordSU}></input>
                         </div>
-                        <button class="submit_button" >Sign-Up</button>
+                        <button class="submit_button" onClick={() => handleSignUp()}>Sign-Up</button>
                     </div>
                 </div>
             </div>

@@ -7,6 +7,7 @@ module.exports = mongoose.model('user', new mongoose.Schema({
     lockout: {
         state : Boolean,
         connectAttempt : Number
-    }
+    },
+    token : String
 }));
 
