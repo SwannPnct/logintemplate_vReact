@@ -83,6 +83,15 @@ router.post('/sign-in', async (req,res,next) => {
   
 })
 
+router.get('get-info', async (req,res,next) => {
+  const user = await User.findOne({token: req.query.token});
+  const info = {
+    username: user.username,
+    email: user.email
+  }
+  res.json({result: true, info})
+})
+
 router.get('/sign-out', (req,res,async) => {
   
 })
