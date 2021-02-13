@@ -20,6 +20,13 @@ export default function Login() {
                 password: passwordSI
             })
         })
+        const resJson = await res.json();
+        if (!resJson.result) {
+            setErrorSI(resJson.error);
+        } else {
+            setErrorSI(null);
+            setToken(resJson.token)
+        }
     }
 
     async function handleSignUp() {
@@ -49,6 +56,7 @@ export default function Login() {
                         <h3>Login into your account</h3>
                     </div>
                     <div className="form">
+                    {errorSI ? <div className="alert_message">{errorSI}</div> : null}
                         <div>
                             <label>Email</label>
                             <input type="text" onChange={() => e => setEmailSI(e.target.value)} value={emailSI}></input>
@@ -65,6 +73,7 @@ export default function Login() {
                         <h3>Create a new account</h3>
                     </div>
                     <div className="form">
+                        {errorSU ? <div className="alert_message">{errorSU}</div> : null}
                         <div>
                             <label>Username</label>
                             <input type="text" onChange={() => e => setUsernameSU(e.target.value)} value={usernameSU}></input>
