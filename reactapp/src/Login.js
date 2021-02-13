@@ -1,6 +1,14 @@
-import React from 'react'
+import React,{useContext, useState} from 'react'
+import {TokenContext} from './App'
 
 export default function Login() {
+    const {token, setToken} = useContext(TokenContext)
+    const [emailSI, setEmailSI] = useState("")
+    const [passwordSI, setPasswordSI] = useState("")
+    const [usernameSU, setUsernameSU] = useState("")
+    const [emailSU, setEmailSU] = useState("")
+    const [passwordSU, setPasswordSU] = useState("")
+
 
     return (
         <div className="main_container">
@@ -12,11 +20,11 @@ export default function Login() {
                     <div className="form">
                         <div>
                             <label>Email</label>
-                            <input type="text"></input>
+                            <input type="text" onChange={() => e => setEmailSI(e.target.value)} value={emailSI}></input>
                         </div>
                         <div>
                             <label>Password</label>
-                            <input type="password"></input>
+                            <input type="password" onChange={() => e => setPasswordSI(e.target.value)} value={passwordSI}></input>
                         </div>
                         <button class="submit_button">Sign-In</button>
                     </div>
@@ -28,17 +36,17 @@ export default function Login() {
                     <div className="form">
                         <div>
                             <label>Username</label>
-                            <input type="text"></input>
+                            <input type="text" onChange={() => e => setUsernameSU(e.target.value)} value={usernameSU}></input>
                         </div>
                         <div>
                             <label>Email</label>
-                            <input type="text"></input>
+                            <input type="text" onChange={() => e => setEmailSU(e.target.value)} value={emailSU}></input>
                         </div>
                         <div>
                             <label>Password</label>
-                            <input type="password"></input>
+                            <input type="password" onChange={() => e => setPasswordSU(e.target.value)} value={passwordSU}></input>
                         </div>
-                        <button class="submit_button">Sign-Up</button>
+                        <button class="submit_button" >Sign-Up</button>
                     </div>
                 </div>
             </div>
