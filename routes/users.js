@@ -25,9 +25,11 @@ router.post('/sign-up', async (req,res,next) => {
   //check password strength, for medium strength > asks for confirmation, decline low strength
   const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
   const mediumRegex = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})/;
-  if (mediumRegex.test(req.body.password)) {
-    res.json({result: false, medium: true, error: "Password security level : Medium"})
-  } else if (!strongRegex.test(req.body.password)) {
+  //if (mediumRegex.test(req.body.password)) {
+  //  res.json({result: false, medium: true, error: "Password security level : Medium"})
+  //  return;
+ // } else 
+  if (!strongRegex.test(req.body.password) && !mediumRegex.test(req.body.password)) {
     res.json({result: false, medium: false, error: "Password security level too low"})
     return;
   }
@@ -83,8 +85,12 @@ router.post('/sign-in', async (req,res,next) => {
   
 })
 
-router.get('get-info', async (req,res,next) => {
+router.get('/get-info', async (req,res,next) => {
   const user = await User.findOne({token: req.query.token});
+  if (!user) {
+    res.json({result: false, error: "There was an issue fetching your infos. Please login again."});
+    return;
+  }
   const info = {
     username: user.username,
     email: user.email

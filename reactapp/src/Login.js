@@ -48,7 +48,6 @@ export default function Login() {
             setToken(resJson.token)
         }
     }
-    
     if (token) {
         return (
             <Redirect to='/info'/>
@@ -65,11 +64,11 @@ export default function Login() {
                         {errorSI ? <div className="alert_message">{errorSI}</div> : null}
                             <div>
                                 <label>Email</label>
-                                <input type="text" onChange={() => e => setEmailSI(e.target.value)} value={emailSI}></input>
+                                <input type="text" onChange={(e) => setEmailSI(e.target.value)} value={emailSI}></input>
                             </div>
                             <div>
                                 <label>Password</label>
-                                <input type="password" onChange={() => e => setPasswordSI(e.target.value)} value={passwordSI}></input>
+                                <input type="password" onChange={(e) => setPasswordSI(e.target.value)} value={passwordSI}></input>
                             </div>
                             <button class="submit_button" onClick={() => handleSignIn()}>Sign-In</button>
                         </div>
@@ -82,15 +81,15 @@ export default function Login() {
                             {errorSU ? <div className="alert_message">{errorSU}</div> : null}
                             <div>
                                 <label>Username</label>
-                                <input type="text" onChange={() => e => setUsernameSU(e.target.value)} value={usernameSU}></input>
+                                <input type="text" onChange={(e) => setUsernameSU(e.target.value)} value={usernameSU}></input>
                             </div>
                             <div>
                                 <label>Email</label>
-                                <input type="text" onChange={() => e => setEmailSU(e.target.value)} value={emailSU}></input>
+                                <input type="text" onChange={(e) => setEmailSU(e.target.value)} value={emailSU}></input>
                             </div>
                             <div>
                                 <label>Password</label>
-                                <input type="password" onChange={() => e => setPasswordSU(e.target.value)} value={passwordSU}></input>
+                                <input type="password" onChange={(e) => setPasswordSU(e.target.value)} value={passwordSU}></input>
                             </div>
                             <button class="submit_button" onClick={() => handleSignUp()}>Sign-Up</button>
                         </div>

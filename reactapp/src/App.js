@@ -14,7 +14,7 @@ function App() {
     <TokenContext.Provider value={{token, setToken}}>
       <Router>
         <Switch>
-          <Route path='/'>
+          <Route exact path='/'>
             <Login/>
           </Route>
           <Route path='/info'>

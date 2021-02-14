@@ -21,9 +21,7 @@ export default function Info() {
     } else {
         return (
             <div className="main_container">
-                <p>Hello.</p>
-                <p>Your username is {userInfo.username}</p>
-                <p>Your email is {userInfo.email}</p>
+                <p>Hello. Your username is {userInfo.username}. Your email is {userInfo.email}</p>
             </div>
         )
     }
