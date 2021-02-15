@@ -7,6 +7,12 @@ const User = require('./db/user_model');
 
 router.post('/sign-up', async (req,res,next) => {
 
+  //check if all input fields have been completed
+  if (!req.body.username || !req.body.email || !req.body.password) {
+    res.json({result: false, error: "One or more field is missing."})
+    return;
+  }
+
   //check email format
   const emailFormat = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   const emailFormatCheck = emailFormat.test(String(req.body.email).toLowerCase());
@@ -25,12 +31,12 @@ router.post('/sign-up', async (req,res,next) => {
   //check password strength, for medium strength > asks for confirmation, decline low strength
   const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
   const mediumRegex = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})/;
-  //if (mediumRegex.test(req.body.password)) {
-  //  res.json({result: false, medium: true, error: "Password security level : Medium"})
-  //  return;
- // } else 
-  if (!strongRegex.test(req.body.password) && !mediumRegex.test(req.body.password)) {
-    res.json({result: false, medium: false, error: "Password security level too low"})
+  if (mediumRegex.test(req.body.password) && !req.body.mediumSec) {
+    res.json({result: false, medium: true, error: "Password security level is Medium. Are you sure you want this password?"})
+    return;
+  } else 
+  if (!strongRegex.test(req.body.password) && !req.body.mediumSec) {
+    res.json({result: false, error: "Password security level too low"})
     return;
   }
 

@@ -72,16 +72,26 @@ footer {
   text-align: center;
   text-decoration: none;
   outline: none;
-  color: #6D6D6D;
-  background-color: #dcdde1;
+  color: #f5f6fa;
+  background-color: #3B3B3B;
   border: none;
   border-radius: 7px;
-  box-shadow: 0 6px 0px 1px #999999;
 }
-.submit_button:active {
-   box-shadow: 0 3.33px 0px 1px #666666;
-   transform: translateY(2.22px);
-   -webkit-transform: translateY(2.22px);
+
+.cancel_button {
+  display: inline-block;
+  padding: 5px 5px;
+  font-size: 15px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #9C9C9C;
+  background-color: #E1E1E1;
+  border: none;
+  border-radius: 7px;
 }
 
 .gen_form {
@@ -108,4 +118,9 @@ footer {
 .alert_message {
   color: #e84118;
   background-color: lightpink;
+}
+
+.medium_alert_message {
+  color:#EC6801 ;
+  background-color:#FFB352 ;
 }

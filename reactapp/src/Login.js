@@ -11,6 +11,7 @@ export default function Login() {
     const [passwordSU, setPasswordSU] = useState("")
     const [errorSI, setErrorSI] = useState(null)
     const [errorSU, setErrorSU] = useState(null)
+    const [mediumHandling, setMediumHandling] = useState(false)
 
     async function handleSignIn() {
         const res = await fetch('/users/sign-in', {
@@ -30,24 +31,39 @@ export default function Login() {
         }
     }
 
-    async function handleSignUp() {
+    async function handleSignUp(bool) {
         const res = await fetch('/users/sign-up', {
             method: "POST",
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({
                 username: usernameSU,
                 email: emailSU,
-                password: passwordSU
+                password: passwordSU,
+                mediumSec: bool ? true : false
             })
         })
-        const resJson = await res.json();
+        const resJson = await res.json()
         if (!resJson.result) {
-            setErrorSU(resJson.error);
+            if (resJson.medium) {
+                setErrorSU(resJson.error)
+                setMediumHandling(true)
+            } else {
+                setMediumHandling(false)
+                setErrorSU(resJson.error)
+            }
+            
         } else {
-            setErrorSU(null);
+            setErrorSU(null)
             setToken(resJson.token)
+            setMediumHandling(false)
         }
     }
+
+    function handleCancelMedium() {
+        setMediumHandling(false)
+        setErrorSU(null)
+    }
+
     if (token) {
         return (
             <Redirect to='/info'/>
@@ -78,8 +94,11 @@ export default function Login() {
                             <h3>Create a new account</h3>
                         </div>
                         <div className="form">
-                            {errorSU ? <div className="alert_message">{errorSU}</div> : null}
-                            <div>
+                            {errorSU ? <div className={!mediumHandling ? "alert_message" : "medium_alert_message"}>{errorSU}{mediumHandling? <><br></br><button class="submit_button" onClick={() => handleSignUp(true)}>Yes</button><button class="cancel_button" onClick={() => handleCancelMedium()}>No</button></> : null}</div> : null}
+                            
+                            {mediumHandling ? null : 
+                            <>
+                                <div>
                                 <label>Username</label>
                                 <input type="text" onChange={(e) => setUsernameSU(e.target.value)} value={usernameSU}></input>
                             </div>
@@ -91,7 +110,10 @@ export default function Login() {
                                 <label>Password</label>
                                 <input type="password" onChange={(e) => setPasswordSU(e.target.value)} value={passwordSU}></input>
                             </div>
-                            <button class="submit_button" onClick={() => handleSignUp()}>Sign-Up</button>
+                            <button class="submit_button" onClick={() => handleSignUp(false)}>Sign-Up</button>
+                            </>
+                            }
+                            
                         </div>
                     </div>
                 </div>
