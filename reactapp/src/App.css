@@ -118,9 +118,11 @@ footer {
 .alert_message {
   color: #e84118;
   background-color: lightpink;
+  padding: 7px;
 }
 
 .medium_alert_message {
   color:#EC6801 ;
   background-color:#FFB352 ;
+  padding: 7px;
 }
