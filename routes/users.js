@@ -61,10 +61,13 @@ router.post('/sign-up', async (req,res,next) => {
           state : false,
           connectAttempt : 0
         },
-        token: uid2(64)
+        token: uid2(64),
+        resetToken: null,
+        emailVerified: false
       })
       const newSaved = await newUser.save();
     
+      //sending email confirmation > in the future that needs to allow the confirmation of the email in the DB
       transporter.sendMail({
         to: newSaved.email,
         from: "welcome@logintemplate.com",
