@@ -2,16 +2,12 @@ var express = require('express');
 var router = express.Router();
 const bcrypt = require('bcrypt');
 const uid2 = require('uid2');
-const nodemailer = require('nodemailer');
-const sendgrid = require('nodemailer-sendgrid-transport');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_KEY);
 
 const User = require('./db/user_model');
 
-const transporter = nodemailer.createTransport(sendgrid({
-  auth: {
-    api_key: process.env.SENDGRID_KEY
-  }
-}))
+
 
 router.post('/sign-up', async (req,res,next) => {
 
@@ -68,12 +64,13 @@ router.post('/sign-up', async (req,res,next) => {
       const newSaved = await newUser.save();
     
       //sending email confirmation > in the future that needs to allow the confirmation of the email in the DB
-      transporter.sendMail({
+      sgMail.send({
         to: newSaved.email,
-        from: "welcome@logintemplate.com",
+        from: process.env.SENDER_ID,
         subject: "Welcome to Login Template",
         html: "Welcome " + newSaved.username
       })
+      
       res.json({result:true, token : newSaved.token})
     }
   })
