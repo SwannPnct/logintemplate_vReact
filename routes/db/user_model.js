@@ -8,6 +8,7 @@ module.exports = mongoose.model('user', new mongoose.Schema({
         state : Boolean,
         connectAttempt : Number
     },
-    token : String
+    token : String,
+    resetToken: String
 }));
 
