@@ -117,7 +117,7 @@ router.post('/sign-in', async (req,res,next) => {
 })
 
 router.get('/get-info', async (req,res,next) => {
-  const user = await User.findOne({token: req.query.token});
+  const user = await User.findOne({"connect.token": req.query.token});
   if (!user || !checkTokenValidity(user.connect.expirationDate)) {
     res.json({result: false, error: "There was an issue fetching your infos. Please login again."});
     return;
