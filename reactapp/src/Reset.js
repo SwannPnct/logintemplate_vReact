@@ -4,16 +4,17 @@ import {useParams, Redirect} from 'react-router-dom'
 export default function ResetPassword(props) {
 
     const {token} = useParams()
-    const [password, setPassword] = useState(null)
+    const [password, setPassword] = useState("")
     const [isInvalid, setIsInvalid] = useState(false)
+
+    const [error, setError] = useState(null)
+    const [mediumHandling, setMediumHandling] = useState(false)
 
     useEffect(() => {
         (async () => {
-            await fetch("/users/check-token/" + token)
-            .then((res) => {
-                const resJson = JSON.stringify(res)
-                if (!resJson.result) setIsInvalid(true)
-            })
+            const res = await fetch("/users/check-token/" + token)
+            const resJson = await res.json()
+            if (!resJson.result) setIsInvalid(true)
         })()
     },[])
 

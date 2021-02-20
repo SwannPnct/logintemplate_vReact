@@ -5,11 +5,11 @@ import {Redirect} from 'react-router-dom'
 export default function Login() {
     const {token, setToken} = useContext(TokenContext)
 
-    const [emailSI, setEmailSI] = useState(null)
-    const [passwordSI, setPasswordSI] = useState(null)
-    const [usernameSU, setUsernameSU] = useState(null)
-    const [emailSU, setEmailSU] = useState(null)
-    const [passwordSU, setPasswordSU] = useState(null)
+    const [emailSI, setEmailSI] = useState("")
+    const [passwordSI, setPasswordSI] = useState("")
+    const [usernameSU, setUsernameSU] = useState("")
+    const [emailSU, setEmailSU] = useState("")
+    const [passwordSU, setPasswordSU] = useState("")
     const [errorSI, setErrorSI] = useState(null)
     const [errorSU, setErrorSU] = useState(null)
     const [mediumHandling, setMediumHandling] = useState(false)
@@ -67,21 +67,20 @@ export default function Login() {
     }
 
     async function handleForgotPassword() {
-        await fetch("users/forgot-password", {
+        const res = await fetch("users/forgot-password", {
             method: "POST",
             headers: {"Content-type": "application/json"},
             body: JSON.stringify({
                 email: emailSI
             })
-        }).then((res) => {
-            const resJson = JSON.stringify(res)
-            if (!resJson.result) {
-                setErrorSI(resJson.error)
-            } else {
-                if(errorSI) setErrorSI(null)
-                setMessageReset(resJson.message)
-            }
         })
+        const resJson = await res.json()
+        if (!resJson.result) {
+            setErrorSI(resJson.error)
+        } else {
+            if(errorSI) setErrorSI(null)
+            setMessageReset(resJson.message)
+        }
     }
 
     if (token) {
@@ -108,14 +107,14 @@ export default function Login() {
                                 <input type="password" onChange={(e) => setPasswordSI(e.target.value)} value={passwordSI}></input>
                             </div>
                             <div>
-                                <button class="submit_button forgot_button" onClick={() => handleForgotPassword()}>Forgot password?</button>
-                                <button class="submit_button" onClick={() => handleSignIn()}>Sign-In</button>
+                                <button className="submit_button forgot_button" onClick={() => handleForgotPassword()}>Forgot password?</button>
+                                <button className="submit_button" onClick={() => handleSignIn()}>Sign-In</button>
                             </div>
                             
                         </div>
                     </div>
-                    <div class="gen_form" id="form_two">
-                        <div class="form_header">
+                    <div className="gen_form" id="form_two">
+                        <div className="form_header">
                             <h3>Create a new account</h3>
                         </div>
                         <div className="form">
@@ -135,7 +134,7 @@ export default function Login() {
                                 <label>Password</label>
                                 <input type="password" onChange={(e) => setPasswordSU(e.target.value)} value={passwordSU}></input>
                             </div>
-                            <button class="submit_button" onClick={() => handleSignUp(false)}>Sign-Up</button>
+                            <button className="submit_button" onClick={() => handleSignUp(false)}>Sign-Up</button>
                             </>
                             }
                             
