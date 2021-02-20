@@ -21,7 +21,7 @@ function App() {
           <Route path='/info'>
             <Info/>
           </Route>
-          <Route path='/reset-password'>
+          <Route path='/reset-password/:token'>
             <ResetPassword/>
           </Route>
         </Switch>

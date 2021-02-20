@@ -161,4 +161,17 @@ router.post('/forgot-password', async (req,res,next) => {
   }
 })
 
+router.get("/check-token", async (req,res,next) => {
+  if (!req.query.token) {
+    res.json({result:false})
+    return
+  }
+  const user = await User.findOne({"connect.token": req.query.token})
+  if (!user) {
+    res.json({result:false})
+  } else {
+    checkTokenValidity(user.connect.expirationDate) ? res.json({result:true}) : res.json({result:false})
+  }
+})
+
 module.exports = router;
