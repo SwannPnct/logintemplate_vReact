@@ -10,7 +10,7 @@ export default function Info() {
         (async () => {
             const res = await fetch('/users/get-info?token='+token);
             const resJson = await res.json();
-            resJson.result ? setUserInfo({username: resJson.info.username, email: resJson.info.email}) : setUserInfo(null)
+            resJson.result ? setUserInfo({username: resJson.info.username, email: resJson.info.email}) : setToken(null)
         })()
     },[])
 

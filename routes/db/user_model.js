@@ -8,8 +8,14 @@ module.exports = mongoose.model('user', new mongoose.Schema({
         state : Boolean,
         connectAttempt : Number
     },
-    token : String,
-    resetToken: String,
+    connect : {
+        token: String,
+        expirationDate: Date
+    },
+    reset: {
+        token: String,
+        expirationDate: Date
+    },
     emailVerified: Boolean
 }));
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import './App.css'
 import Login from './Login'
 import Info from './Info'
+import ResetPassword from './Reset'
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 
 export const TokenContext = React.createContext()
@@ -19,6 +20,9 @@ function App() {
           </Route>
           <Route path='/info'>
             <Info/>
+          </Route>
+          <Route path='/reset-password'>
+            <ResetPassword/>
           </Route>
         </Switch>
       </Router>

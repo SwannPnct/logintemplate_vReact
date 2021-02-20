@@ -78,6 +78,11 @@ footer {
   border-radius: 7px;
 }
 
+.forgot_button {
+  color: #AFAFAF;
+  background-color: #EEEEEE;
+}
+
 .cancel_button {
   display: inline-block;
   padding: 5px 5px;

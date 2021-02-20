@@ -7,6 +7,9 @@ sgMail.setApiKey(process.env.SENDGRID_KEY);
 
 const User = require('./db/user_model');
 
+const checkTokenValidity = (date) => {
+  return date < Date.now() ? false : true
+}
 
 
 router.post('/sign-up', async (req,res,next) => {
@@ -57,8 +60,14 @@ router.post('/sign-up', async (req,res,next) => {
           state : false,
           connectAttempt : 0
         },
-        token: uid2(64),
-        resetToken: null,
+        connect: {
+          token: uid2(64),
+          expirationDate: Date.now() + (3600000) * 4
+        },
+        reset: {
+          token: null,
+          expirationDate: null
+        },
         emailVerified: false
       })
       const newSaved = await newUser.save();
@@ -71,7 +80,7 @@ router.post('/sign-up', async (req,res,next) => {
         html: "Welcome " + newSaved.username
       })
       
-      res.json({result:true, token : newSaved.token})
+      res.json({result:true, token : newSaved.connect.token})
     }
   })
 })
@@ -90,9 +99,11 @@ router.post('/sign-in', async (req,res,next) => {
   if(passwordCheck) {
     if (user.lockout.connectAttempt > 0) {
       user.lockout.connectAttempt = 0;
-      await user.save();
     }
-    res.json({result:true, token: user.token})
+    user.connect.token = uid2(64);
+    user.connect.expirationDate = Date.now() + (3600000) * 4
+    await user.save();
+    res.json({result:true, token: user.connect.token})
   } else {
     user.lockout.connectAttempt++;
     if (user.lockout.connectAttempt >= 10) {
@@ -107,7 +118,7 @@ router.post('/sign-in', async (req,res,next) => {
 
 router.get('/get-info', async (req,res,next) => {
   const user = await User.findOne({token: req.query.token});
-  if (!user) {
+  if (!user || !checkTokenValidity(user.connect.expirationDate)) {
     res.json({result: false, error: "There was an issue fetching your infos. Please login again."});
     return;
   }
@@ -120,6 +131,34 @@ router.get('/get-info', async (req,res,next) => {
 
 router.get('/sign-out', (req,res,async) => {
   
+})
+
+router.post('/forgot-password', async (req,res,next) => {
+  const emailFormat = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const emailFormatCheck = emailFormat.test(String(req.body.email).toLowerCase());
+  if (!req.body.email || !emailFormatCheck) {
+    res.json({result: false, error : "Please enter an email."})
+    return
+  }
+  const user = await User.findOne({email: req.body.email});
+  if (!user) {
+    res.json({result: true, message : "An email has been sent to this email for you to reset your password."})
+  } else {
+    user.reset.token = uid2(64)
+    user.reset.expirationDate = Date.now() + 3600000
+    await user.save()
+    sgMail.send({
+      to: user.email,
+      from: process.env.SENDER_ID,
+      subject: "Your password reset request",
+      html: `
+      <h5>Password reset request</h5>
+      <p>Follow below link to reset your password:</p><br/>
+      <a href="http://localhost:3001/users/reset-password/${user.reset.token}">Reset your password</a>
+      `
+    })
+    res.json({result: true, message : "An email has been sent to this email for you to reset your password."})
+  }
 })
 
 module.exports = router;
