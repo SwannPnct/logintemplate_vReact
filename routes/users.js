@@ -185,4 +185,39 @@ router.get("/check-token", async (req,res,next) => {
   }
 })
 
+router.post('/reset-password', async (req,res,next) => {
+  const user = await User.findOne({"reset.token" : req.body.token})
+  if (!user) {
+    res.json({result:false, error: "There was an issue resetting your password."})
+  } else {
+    if (!checkTokenValidity(user.connect.expirationDate)) {
+      res.json({result:false, error: null})
+    } else {
+      const oldPasswordCheck = await bcrypt.compare(req.body.password, user.password);
+      if (oldPasswordCheck) {
+        res.json({result:false, error: "You can't choose a password you've used previously."})
+      } else {
+        if (checkPasswordStrength(req.body.password) === 2 && !req.body.mediumSec) {
+          res.json({result: false, medium: true, error: "Password security level is Medium. Are you sure you want this password?"})
+          return;
+        } else 
+        if (checkPasswordStrength(req.body.password) != 3 && !req.body.mediumSec) {
+          res.json({result: false, error: "Password security level too low"})
+          return;
+        }
+        await bcrypt.hash(req.body.password, 10, async (err, hash) => {
+          if (err) {
+            res.json({result:false, error: "There was an issue resetting your password."})
+          } else {
+            user.password = hash
+            user.reset.token = null
+            await user.save()
+            res.json({result: true})
+          }
+        })
+      }
+    }
+  }
+})
+
 module.exports = router;
