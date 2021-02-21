@@ -11,6 +11,23 @@ const checkTokenValidity = (date) => {
   return date < Date.now() ? false : true
 }
 
+const checkEmailValidity = (email) => {
+  const emailFormat = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return emailFormat.test(String(email).toLowerCase())
+}
+
+const checkPasswordStrength = (password) => {
+  const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+  const mediumRegex = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})/;
+  if (strongRegex.test(password)) {
+    return 3
+  } else if(mediumRegex.test(password)) {
+    return 2
+  } else {
+    return 1
+  }
+}
+
 
 router.post('/sign-up', async (req,res,next) => {
 
@@ -21,9 +38,7 @@ router.post('/sign-up', async (req,res,next) => {
   }
 
   //check email format
-  const emailFormat = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  const emailFormatCheck = emailFormat.test(String(req.body.email).toLowerCase());
-  if(!emailFormatCheck) {
+  if(!checkEmailValidity(req.body.email)) {
     res.json({result: false, error: "You've not entered an email."})
     return;
   }
@@ -36,13 +51,11 @@ router.post('/sign-up', async (req,res,next) => {
   }
 
   //check password strength, for medium strength > asks for confirmation, decline low strength
-  const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
-  const mediumRegex = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})/;
-  if (mediumRegex.test(req.body.password) && !req.body.mediumSec) {
+  if (checkPasswordStrength(req.body.password) === 2 && !req.body.mediumSec) {
     res.json({result: false, medium: true, error: "Password security level is Medium. Are you sure you want this password?"})
     return;
   } else 
-  if (!strongRegex.test(req.body.password) && !req.body.mediumSec) {
+  if (checkPasswordStrength(req.body.password) != 3 && !req.body.mediumSec) {
     res.json({result: false, error: "Password security level too low"})
     return;
   }
@@ -50,7 +63,7 @@ router.post('/sign-up', async (req,res,next) => {
   //encrypt by hashing and salting thanks to bcrypt package and saving user to DB
   await bcrypt.hash(req.body.password, 10, async (err,hash) => {
     if(err) {
-      res.json({result: false, error: err})
+      res.json({result: false, error: "There was an error creating your account."})
     } else {
       const newUser = new User({
         username : req.body.username,
@@ -134,9 +147,7 @@ router.get('/sign-out', (req,res,async) => {
 })
 
 router.post('/forgot-password', async (req,res,next) => {
-  const emailFormat = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  const emailFormatCheck = emailFormat.test(String(req.body.email).toLowerCase());
-  if (!req.body.email || !emailFormatCheck) {
+  if (!req.body.email || !checkEmailValidity(req.body.email)) {
     res.json({result: false, error : "Please enter an email."})
     return
   }
